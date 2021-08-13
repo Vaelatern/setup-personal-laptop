@@ -74,11 +74,15 @@ echo "root:${ROOT_PASSWORD}" | chpasswd -c SHA512
 ln -s /etc/sv/dhcpcd /etc/runit/runsvdir/default/
 ln -s /etc/sv/sshd /etc/runit/runsvdir/default/
 #            ... fstab
+disk_to_uuid() {
+	blkid_line="$(blkid "$1")"
+	tmp="${blkid_line#*' UUID="'}"
+	uuid="${tmp%%\"*}"
+	echo "${uuid}"
+}
 extract_uuid() {
-	blkid_line="$(blkid "$1")";
-	tmp="${blkid_line#*' UUID="'}";
-	uuid="${tmp%%\"*}";
-	end_of_line="$2";
+	uuid="$(disk_to_uuid "$1")"
+	end_of_line="$2"
 	full_line="UUID=${uuid} ${end_of_line}"
 	echo "$full_line"
 }
@@ -93,6 +97,9 @@ chmod 440 /etc/sudoers.d/wheel
 rm -f /etc/zfs/zpool.cache
 touch /etc/zfs/zpool.cache
 zpool set cachefile=/etc/zfs/zpool.cache root
+#            ... suspend to disk
+uuid="$(disk_to_uuid /dev/nvme0n1p2)"
+sed -i "s:GRUB_CMDLINE_LINUX_DEFAULT=\":GRUB_CMDLINE_LINUX_DEFAULT=\"resume=UUID=$uuid :" /etc/default/grub
 #            ... grub https://openzfs.github.io/openzfs-docs/Getting%20Started/RHEL-based%20distro/RHEL%208-based%20distro%20Root%20on%20ZFS/5-bootloader.html
 zpool set bootfs=root/void/root root
 echo 'GRUB_ENABLE_BLSCFG=false' >> /etc/default/grub
