@@ -72,16 +72,16 @@ echo "root:${ROOT_PASSWORD}" | chpasswd -c SHA512
 ln -s /etc/sv/dhcpcd /etc/runit/runsvdir/default/
 ln -s /etc/sv/sshd /etc/runit/runsvdir/default/
 #            ... fstab
-mounts="$(awk '!/cgroup|sysfs|securityfs|devpts|devtmpfs|tmpfs|proc|zfs/ { print $0 }' /proc/mounts)"
-for line in "$mounts"; do
-	dev="${line%% *}";
-	blkid_line="$(blkid $dev)";
+extract_uuid() {
+	blkid_line="$(blkid "$1")";
 	tmp="${blkid_line#*' UUID="'}";
 	uuid="${tmp%%\"*}";
-	end_of_line="${line#* }";
-	full_line="UUID=\"${uuid}\" ${end_of_line}"
+	end_of_line="$2";
+	full_line="UUID=${uuid} ${end_of_line}"
 	echo "$full_line"
-done >> /etc/fstab
+}
+extract_uuid /dev/nvme0n1p1 "/boot/efi vfat defaults 0 2" >> /etc/fstab
+extract_uuid /dev/nvme0n1p2 "swap swap defaults 0 0" >> /etc/fstab
 #            ... dkms
 # musl doesn't yet care about this
 # dd if=/dev/urandom bs=1 count=4 > /etc/hostid
