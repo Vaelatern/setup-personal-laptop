@@ -1,11 +1,12 @@
+#!/bin/sh
 # Set these variables, then execute.
-: ${USERNAME:=iforgottosetausername}
-: ${HOSTNAME:=iforgottosetahostname}
-: ${USER_PASSWORD:=voidlinux}
-: ${ROOT_PASSWORD:=voidlinux}
-: ${TIMEZONE:=America/Chicago}
-: ${REPO:=https://alpha.de.repo.voidlinux.org/current/musl/}
-: ${ARCH:=x86_64-musl}
+: "${USERNAME:=iforgottosetausername}"
+: "${HOSTNAME:=iforgottosetahostname}"
+: "${USER_PASSWORD:=voidlinux}"
+: "${ROOT_PASSWORD:=voidlinux}"
+: "${TIMEZONE:=America/Chicago}"
+: "${REPO:=https://alpha.de.repo.voidlinux.org/current/musl/}"
+: "${ARCH:=x86_64-musl}"
 
 # Start with a hostname in case hostname leaks in setup later (such as mdadm)
 hostname "${HOSTNAME}"
@@ -56,6 +57,7 @@ cp /etc/resolv.conf /sysroot/etc/
 
 ######################
 # Inside the chroot....
+# shellcheck disable=SC2154
 cat <<SETUP_EOF | PS1='(chroot) # ' chroot /sysroot/ /bin/bash
 # We set the ... timezone
 ln -sf /usr/share/zoneinfo/"$TIMEZONE" /etc/localtime
@@ -96,7 +98,7 @@ source /etc/profile.d/zpool_vdev_name_path.sh
 mkdir -p /boot/EFI/rocky        # EFI GRUB dir
 mkdir -p /boot/grub2
 disk=/dev/nvme0n1
-efibootmgr -cgp 1 -l "\EFI\rocky\shimx64.efi" -L "rocky-${disk##*/}" -d ${disk}
+efibootmgr -cgp 1 -l "\EFI\rocky\shimx64.efi" -L "rocky-${disk##*/}" -d "${disk}"
 tee /etc/grub.d/09_fix_root_on_zfs <<EOF
 #!/bin/sh
 echo 'insmod zfs'
