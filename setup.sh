@@ -84,6 +84,9 @@ extract_uuid() {
 }
 extract_uuid /dev/nvme0n1p1 "/boot/EFI vfat defaults 0 2" >> /etc/fstab
 extract_uuid /dev/nvme0n1p2 "swap swap defaults 0 0" >> /etc/fstab
+#            ... sudo
+echo "%wheel ALL=(ALL) ALL" > /etc/sudoers.d/wheel
+chmod 440 /etc/sudoers.d/wheel
 #            ... dkms
 # musl doesn't yet care about this
 # dd if=/dev/urandom bs=1 count=4 > /etc/hostid
