@@ -82,7 +82,7 @@ extract_uuid() {
 	full_line="UUID=${uuid} ${end_of_line}"
 	echo "$full_line"
 }
-extract_uuid /dev/nvme0n1p1 "/boot/efi vfat defaults 0 2" >> /etc/fstab
+extract_uuid /dev/nvme0n1p1 "/boot/EFI vfat defaults 0 2" >> /etc/fstab
 extract_uuid /dev/nvme0n1p2 "swap swap defaults 0 0" >> /etc/fstab
 #            ... dkms
 # musl doesn't yet care about this
