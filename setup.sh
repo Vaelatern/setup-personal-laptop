@@ -85,12 +85,10 @@ extract_uuid /dev/nvme0n1p2 "swap swap defaults 0 0" >> /etc/fstab
 #            ... dkms
 # musl doesn't yet care about this
 # dd if=/dev/urandom bs=1 count=4 > /etc/hostid
-zpool set cachefile=/etc/zfs/zpool.cache root
-#            ... grub https://openzfs.github.io/openzfs-docs/Getting%20Started/RHEL-based%20distro/RHEL%208-based%20distro%20Root%20on%20ZFS/5-bootloader.html
 rm -f /etc/zfs/zpool.cache
 touch /etc/zfs/zpool.cache
-chmod a-w /etc/zfs/zpool.cache
-chattr +i /etc/zfs/zpool.cache
+zpool set cachefile=/etc/zfs/zpool.cache root
+#            ... grub https://openzfs.github.io/openzfs-docs/Getting%20Started/RHEL-based%20distro/RHEL%208-based%20distro%20Root%20on%20ZFS/5-bootloader.html
 zpool set bootfs=root/void/root root
 echo 'GRUB_ENABLE_BLSCFG=false' >> /etc/default/grub
 echo 'export ZPOOL_VDEV_NAME_PATH=YES' >> /etc/profile.d/zpool_vdev_name_path.sh
